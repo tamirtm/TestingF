@@ -1,0 +1,2 @@
+[console_scripts]
+mpcdeck = mpcdeck.cli:main

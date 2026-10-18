@@ -1,0 +1,16 @@
+[project]
+name = "mpc-deck-builder"
+version = "0.1.0"
+description = "Deck list -> bleed-ready card images + MPC Autofill order.xml"
+requires-python = ">=3.11"
+dependencies = ["pillow>=10.1"]
+
+[project.scripts]
+mpcdeck = "mpcdeck.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["mpcdeck"]

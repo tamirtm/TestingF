@@ -20,4 +20,4 @@ Pipeline for every build: **find → vet → vendor → study → adapt → buil
 - Workflows touching external services run with `DRY_RUN=1` unless the human says go.
 
 ## Skills here
-`oss-adopt` · `code-recon` · `build-test` · `skill-lab` · `workflow-lab` (see .claude/skills/).
+`oss-adopt` · `code-recon` · `build-test` · `skill-lab` · `workflow-lab` · `mpc-deck` (see .claude/skills/).
