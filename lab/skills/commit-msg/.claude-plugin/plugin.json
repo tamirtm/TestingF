@@ -1,0 +1,5 @@
+{
+  "name": "commit-msg",
+  "version": "0.1.0",
+  "description": "Conventional Commits message writer (skill-lab example)"
+}
