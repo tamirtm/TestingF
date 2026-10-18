@@ -37,3 +37,15 @@ def test_art_override_and_full_scans(tmp_path, sf):
 
     out2 = build_deck("1 Lightning Bolt", tmp_path / "o2", sf, dpi=300, full_scans=True, log=lambda *_: None)
     assert Image.open(out2 / "fronts" / "Lightning Bolt.png").size == (816, 1110)
+
+
+def test_custom_design_used_as_is(tmp_path, sf):
+    custom = tmp_path / "custom"
+    custom.mkdir()
+    Image.new("RGB", (744, 1038), (200, 30, 200)).save(custom / "Lightning Bolt.png")
+    out = build_deck("2x Lightning Bolt [Custom Card] #CustomCard", tmp_path / "o", sf, dpi=300,
+                     custom_dir=custom, log=lambda *_: None)
+    img = Image.open(out / "fronts" / "Lightning Bolt.png")
+    assert img.size == (816, 1110) and img.getpixel((408, 555)) == (200, 30, 200)
+    root = ET.parse(out / "order.xml").getroot()
+    assert root.findtext("fronts/card/slots") == "0,1"

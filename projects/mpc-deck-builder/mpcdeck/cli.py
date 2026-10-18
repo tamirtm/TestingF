@@ -3,7 +3,8 @@
   mpcdeck deck.txt -o out/my-deck [--dpi 600] [--stock S30] [--foil] [--art art/] [--frames frames/]
           [--cardback back.png] [--full-scans]
 
-Art priority per card: art/<Card Name>.(png|jpg) override  ->  Scryfall art_crop.
+Per card: custom/<Card Name>.png (finished design, bleed added)  ->  render with
+art/<Card Name>.png override or Scryfall art_crop.
 --full-scans: skip rendering; use Scryfall's full card image + edge-extended bleed (playtest only).
 """
 import argparse
@@ -21,7 +22,8 @@ from .scryfall import Scryfall
 
 
 def slug(name: str) -> str:
-    return re.sub(r"[^A-Za-z0-9 ,'\-]+", "", name).strip()
+    name = name.replace(" // ", " - ")
+    return re.sub(r"\s+", " ", re.sub(r"[^A-Za-z0-9 ,'\-]+", "", name)).strip()
 
 
 def faces(card: dict) -> list[dict]:
@@ -49,7 +51,7 @@ def local_art(art_dir: Path | None, name: str) -> bytes | None:
 
 def build_deck(text: str, out: Path, sf: Scryfall, dpi: int = 600, stock: str = "S30", foil: bool = False,
                art_dir: Path | None = None, frames_dir: Path | None = None, back_path: Path | None = None,
-               full_scans: bool = False, log=print) -> Path:
+               full_scans: bool = False, custom_dir: Path | None = None, log=print) -> Path:
     entries = decklist.parse(text)
     cards = sf.cards(entries)
     (out / "fronts").mkdir(parents=True, exist_ok=True)
@@ -64,8 +66,11 @@ def build_deck(text: str, out: Path, sf: Scryfall, dpi: int = 600, stock: str = 
             rel = f"{sub}/{fname}"
             dest = out / rel
             dest.parent.mkdir(exist_ok=True)
+            custom = local_art(custom_dir, face["name"]) if (e.custom or side == 0) else None
             if not dest.exists():
-                if full_scans:
+                if custom is not None:
+                    img = add_bleed(Image.open(io.BytesIO(custom)), dpi)
+                elif full_scans:
                     url = (face.get("image_uris") or cards[e].get("image_uris"))["png"]
                     img = add_bleed(Image.open(io.BytesIO(sf.image(url))), dpi)
                 else:
@@ -97,12 +102,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--foil", action="store_true")
     ap.add_argument("--art", type=Path, default=Path("art"))
     ap.add_argument("--frames", type=Path, default=Path("frames"))
+    ap.add_argument("--custom", type=Path, default=Path("custom"), help="finished card designs: custom/<Card Name>.png, used as-is")
     ap.add_argument("--cardback", type=Path)
     ap.add_argument("--full-scans", action="store_true")
     ap.add_argument("--cache", type=Path, default=Path(".cache/scryfall"))
     a = ap.parse_args(argv)
     text = sys.stdin.read() if str(a.deck) == "-" else a.deck.read_text()
-    build_deck(text, a.out, Scryfall(a.cache), a.dpi, a.stock, a.foil, a.art, a.frames, a.cardback, a.full_scans)
+    build_deck(text, a.out, Scryfall(a.cache), a.dpi, a.stock, a.foil, a.art, a.frames, a.cardback, a.full_scans, a.custom)
     return 0
 
 

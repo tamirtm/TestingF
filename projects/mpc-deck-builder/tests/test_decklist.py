@@ -23,3 +23,23 @@ Sideboard
 def test_bad_line():
     with pytest.raises(ValueError):
         parse("Lightning Bolt")
+
+
+def test_slug_split_card():
+    from mpcdeck.cli import slug
+    assert slug("Fire // Ice") == "Fire - Ice"
+    assert slug("Lim-Dûl's Vault") == "Lim-Dl's Vault"
+
+
+def test_archidekt_tags_and_duplicates():
+    text = """1x Mox Sapphire (ovnt) 2016NA [Ramp]
+1x Crystal Spray [Custom Card] #CustomCard
+1x Crystal Spray [Custom Card] #CustomCard
+1x Savannah (olgc) 2017NA [Land]
+1x Savannah (olgc) 2017NA [Land]
+"""
+    assert parse(text) == [
+        Entry(1, "Mox Sapphire", "ovnt", "2016NA"),
+        Entry(2, "Crystal Spray", custom=True),
+        Entry(2, "Savannah", "olgc", "2017NA"),
+    ]
