@@ -10,6 +10,7 @@ Pipeline for every build: **find → vet → vendor → study → adapt → buil
 | `lab/skills/<name>/` | Skills under test | Skill folder + `evals/`; run with `scripts/eval-skill.sh` |
 | `lab/workflows/<name>/` | Automations under test | `run.sh`, `fixtures/`, `test.sh`; dry-run by default |
 | `scripts/` | Repo tooling | `test-all.sh` is the single CI entry point |
+| `handoff/` | Memory pack for local agents | `MEMORY.md` is the source; keep `memories.jsonl` in sync |
 
 ## Hard rules
 - Check the license before copying a single line (`scripts/license-check.sh vendor/<name>`).
