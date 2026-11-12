@@ -21,3 +21,7 @@ Pipeline for every build: **find → vet → vendor → study → adapt → buil
 
 ## Skills here
 `oss-adopt` · `code-recon` · `build-test` · `skill-lab` · `workflow-lab` · `mpc-deck` (see .claude/skills/).
+
+Also in .claude/skills/: 26 skills copied verbatim from mattpocock/skills (MIT), e.g. `tdd`, `grill-me`,
+`diagnosing-bugs`, `to-spec`, `to-tickets`, `implement`; `/ask-matt` routes between them. They are listed in
+`.claude/skills/VENDORED.tsv`: never hand-edit them, re-run `scripts/install-vendor-skills.sh` (see `NOTICE.md`).
